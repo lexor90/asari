@@ -178,7 +178,11 @@ class Asari
       #   communicating with the CloudSearch server.
       def asari_find(term, options = {})
         records = self.asari_instance.search(term, options)
-        ids = records.map { |id| id.to_i }
+        if self.asari_instance.api_version == '2013-01-01'
+          ids = records.map { |record| record[0].to_i }
+        else
+          ids = records.map { |id| id.to_i }
+        end
 
         records.replace(Array(self.where("id in (?)", ids)))
       end
